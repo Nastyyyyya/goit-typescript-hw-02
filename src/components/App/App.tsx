@@ -8,6 +8,11 @@ import Loader from "../Loader/Loader";
 import SearchBar from "../SearchBar/SearchBar";
 import { Image } from "../Image/Image.types";
 import style from "./App.module.css";
+import axios from "axios";
+
+interface ApiResponse {
+  results: Image[];
+}
 
 const API_URL = "https://api.unsplash.com/search/photos";
 const ACCESS_KEY = "Db9yAiAVsvMSTVKWx8Mb2xcfEvDOWciklwXftB0DjwE";
@@ -26,11 +31,10 @@ const App = () => {
     setLoading(true);
     setError(null);
 
-    fetch(
-      `${API_URL}?query=${query}&page=${page}&per_page=12&client_id=${ACCESS_KEY}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
+    axios
+      .get<ApiResponse>(`${API_URL}?query=${query}&page=${page}&per_page=12&client_id=${ACCESS_KEY}`)
+      .then((response) => {
+        const data = response.data;
         if (data.results.length === 0) {
           setError("No images found for this search term.");
         } else {
